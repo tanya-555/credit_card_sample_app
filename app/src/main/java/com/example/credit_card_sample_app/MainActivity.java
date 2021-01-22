@@ -2,7 +2,10 @@ package com.example.credit_card_sample_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -53,10 +56,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // use this for checking network availability
+    public boolean isNetworkAvailable() {
+        ConnectivityManager manager =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Wifi or Mobile Network is present and connected
+            isAvailable = true;
+        }
+        return isAvailable;
+    }
+
     @Subscribe
     public void onRequestTypeSelected(RequestTypeSelectedEvent event) {
         if (event.requestType.equals(RequestType.SEND_PARTNER_APPLICATION_DATA)) {
             sendPartnerApplicationData();
+        } else if(event.requestType.equals(RequestType.SEND_NETWORK_AVAILABILITY_STATUS)) {
+            sendNetworkAvailabilityStatus();
+        }
+    }
+
+    private void sendNetworkAvailabilityStatus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript("javascript:networkAvailabilityStatus('" +
+                    isNetworkAvailable() + "')");
         }
     }
 

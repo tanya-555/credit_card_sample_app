@@ -27,6 +27,11 @@ public class CCWebAppInterface {
     }
 
     @JavascriptInterface
+    public void isNetworkAvailable(Object msg) {
+        EventBus.getDefault().post(new RequestTypeSelectedEvent(RequestType.SEND_NETWORK_AVAILABILITY_STATUS));
+    }
+
+    @JavascriptInterface
     public void sendSeamlessLoginRequest(Object msg) {
         Log.d("CreditCard", "Login Request");
         EventBus.getDefault().post(new RequestTypeSelectedEvent(RequestType.SEND_PARTNER_APPLICATION_DATA));
